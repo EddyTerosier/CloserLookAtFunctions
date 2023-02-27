@@ -48,6 +48,9 @@ createBooking("LH123", 2); // prints {flightNum: "LH123", numPassengers: 2, pric
 createBooking("LH123", 5); // prints {flightNum: "LH123", numPassengers: 5, price: 199} and adds the object to the bookings array
 createBooking("LH123", undefined, 1000); // prints {flightNum: "LH123", numPassengers: 1, price: 1000} and adds the object to the bookings array (using undefined as a placeholder for the second argument)
 
+// -------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------
+
 // How passing arg works: Value vs reference
 
 /* Cet exemple de code montre comment le passage d'une valeur, 
@@ -95,7 +98,7 @@ const checkIn = function (flightNum, passenger) {
     if (passenger.passport === 24739479284) {
         console.log("Checked in");
     } else {
-        alert("Wrong passport!");
+        console.log("Wrong passport!");
     }
 };
 
@@ -124,3 +127,57 @@ newPassport(jonas);
 
 // Appel de la fonction checkIn avec les arguments flight et jonas (qui a maintenant un nouveau numéro de passeport)
 checkIn(flight, jonas);
+
+// -------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------
+
+// Fonctions accepting Callback Functions
+
+/* Ce code illustre comment utiliser des fonction callback en JavaScript. 
+La fonction transformer() est une fonction de haut niveau - elle prend en 
+compte deux arguments, la chaîne et une fonction callback. Cette fonction 
+exécutera alors la fonction callback donnée sur la chaîne, retournant une 
+version transformée de l'argument d'entrée.
+
+Les fonctions oneWord() et upperFirstWord() sont toutes deux des fonctions callback. 
+Dans cet exemple, upperFirstWord() mettra en majuscule le premier mot de la chaîne d'entrée, 
+tandis que oneWord() transformera la chaîne complète en un mot en minuscules (en remplaçant tous les espaces par rien).
+
+Enfin, high5() est un autre exemple de callback qui sera exécuté à plusieurs reprises, 
+par exemple dans une boucle. Dans ce cas particulier, lorsque le corps du document est 
+cliqué ou lorsqu’un tableau de noms est itéré dans une boucle, la fonction callback high5() est invoquée. */
+
+// Cette fonction prend une chaîne de caractères et renvoie une version en minuscules sans espaces
+const oneWord = function (str) {
+    return str.replaceAll(" ", " ").toLowerCase();
+};
+
+// Cette fonction prend une chaîne de caractères et renvoie une version avec le premier mot en majuscule pour chaque mot
+const upperFirstWord = function (str) {
+    const [first, ...others] = str.split(" ");
+    return [first.toUpperCase(), ...others].join(" ");
+};
+
+// Cette fonction prend une chaîne de caractères et une fonction de transformation, applique la fonction de transformation à la chaîne de caractères, puis affiche la chaîne de caractères d'origine, la chaîne transformée et le nom de la fonction de transformation utilisée
+const transformer = function (str, fn) {
+    console.log(`Original string: ${str}`);
+    console.log(`Transform string ${fn(str)}`);
+    console.log(`Transformed by: ${fn.name}`);
+};
+
+// Applique la fonction upperFirstWord à la chaîne de caractères 'JavaScript is the best!' et affiche le résultat
+transformer("JavaScript is the best!", upperFirstWord);
+
+// Applique la fonction oneWord à la chaîne de caractères 'JavaScript is the best!' et affiche le résultat
+transformer("JavaScript is the best!", oneWord);
+
+// Déclare une fonction high5 qui affiche un emoji "rock on" dans la console
+const high5 = function () {
+    console.log("🤟");
+};
+
+// Attache la fonction high5 à l'événement click du corps du document, de sorte que chaque clic sur le corps du document affiche l'emoji "rock on" dans la console
+document.body.addEventListener("click", high5);
+
+// Applique la fonction high5 à chaque élément du tableau ['Jonas', 'Martha', 'Adam'], de sorte que chaque élément affiche l'emoji "rock on" dans la console
+["Jonas", "Martha", "Adam"].forEach(high5);
