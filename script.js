@@ -258,66 +258,160 @@ contenant le numéro de vol et le nom de la réservation. Il est ensuite appelé
 en utilisant l'opérateur spread (...) qui est essentiellement raccourci pour la méthode apply(). */
 
 const lufthansa = {
+    // object literal containing airline name, IATA code and an array of bookings
     airline: "Lufthansa",
     iataCode: "LH",
     bookings: [],
-    // book: function() {}
+
+    // function to book a seat on a flight
     book(flightNum, name) {
-        console.log(
-            `${name} booked a seat on ${this.airline} flight ${this.iataCode}${flightNum}`
-        );
+        console.log(`
+    ${name} booked a seat on ${this.airline} flight ${this.iataCode}${flightNum}
+    `);
+        // add new booking information to the bookings array
         this.bookings.push({ flight: `${this.iataCode}${flightNum}`, name });
     },
 };
-
+// example of using the book funtion
 lufthansa.book(239, "Jonas Schmedtmann");
 lufthansa.book(635, "John Smith");
 
 const eurowings = {
+    // create new airline with its properties
     airline: "Eurowings",
     iataCode: "EW",
     bookings: [],
 };
 
+// assign the book method from the lufthansa object to a new variable
 const book = lufthansa.book;
 
-// Does NOT work
-// book(23, 'Sarah Williams');
-
-// Call method
-book.call(eurowings, 23, "Sarah Williams");
+// call the book function and pass in eurowings as the this context
+book.call(eurowings, 23, "Sarah Williams"); // le premier paramètre est l'objet vers lequel le $this pointera
 console.log(eurowings);
 
+// call the book function again but this time passing in lufthaansa as the context
 book.call(lufthansa, 239, "Mary Cooper");
 console.log(lufthansa);
 
 const swiss = {
+    // create new airline with its properties
     airline: "Swiss Air Lines",
     iataCode: "LX",
     bookings: [],
 };
 
+// call the book function using swiss as the context, meaning that it will update the swiss bookings array
 book.call(swiss, 583, "Mary Cooper");
 
-// Apply method
+// use apply method to set the context of the book function to the swiss
+// note that the second parameter of the apply method is an array containing the arguments to be passed into the book function
 const flightData = [583, "George Cooper"];
 book.apply(swiss, flightData);
 console.log(swiss);
 
+// spread operator allows us to spread/unpack elements of a given array as individual arguments
+// here we are using the spread operator to pass each element of the flightData array as separate arguments for the book function
 book.call(swiss, ...flightData);
 
 // -------------------------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------
 
 // The bind Method
+
+/* Le méthode bind() crée une nouvelle fonction qui, lorsqu'elle est appelée, 
+affecte sa clé this à la valeur appropriée avec une séquence donnée d'arguments 
+devant être fournis avant ceux fournis lors de l'appel de la nouvelle fonction.
+
+Dans le code ci-dessus, la méthode book.call(eurowings) est utilisée pour créer 
+une nouvelle réservation de vol avec Eurosowings en passant les arguments 23 
+et "Sarah Williams".
+
+Les quatre lignes suivantes, où bookEW, bookLH et bookLX ont été déclarés, 
+utilisent la méthode bind() pour créer une nouvelle fonction avec leur compagnie 
+aérienne respective comme contexte.
+
+De plus, comme les méthodes bind() permettent d'appliquer partiellement des arguments, 
+bookEW23() peut être utilisé pour effectuer une réservation sur Eurowings avec le 
+numéro du passager toujours fixé à 23.
+
+La méthode bind() de la Lufthansa est utilisée pour la préparer à un écouteur d'événements. 
+Cela assurera que le mot clé this fait référence à l'objet Lufthansa chaque fois que le 
+gestionnaire d'événement est déclenché.
+
+Sans cette liaison, le mot clé fera référence à l'objet responsable du déclenchement de 
+l'événement (probablement l'élément DOM qui a été cliqué). Cela veillera à ce que this.planes 
+fasse référence à la propriété appropriée, de manière à pouvoir être incrémentée correctement.
+
+*/
+
 // book.call(eurowings, 23, 'Sarah Williams');
 
-const bookEW = book.bind(eurowings);
-const bookLH = book.bind(lufthansa);
-const bookLX = book.bind(swiss);
+const bookEW = book.bind(eurowings); // bind the book function to the eurowings object
 
-bookEW(23, "Steven Williams");
+const bookLH = book.bind(lufthansa); // bind the book function to the lufthansa object
+const bookLX = book.bind(swiss); // bind the book function to the swiss object
 
-const bookEW23 = book.bind(eurowings, 23);
-bookEW23("Jonas Schmedtmann");
-bookEW23("Martha Cooper");
+bookEW(23, "Steven Williams"); // call the book function using the eurowings object as the context
+
+const bookEW23 = book.bind(eurowings, 23); // bind the book function to the eurowings object and set the flight number to 23
+
+bookEW23("Jonas Schmedtmann"); // call the book function using the eurowings object as the context and the name 'Jonas Schmedtmann' as the second argument
+bookEW23("Martha Cooper"); // call the book function using the eurowings object as the context and th
+
+// Set the lufthansa plane count to 300
+lufthansa.planes = 300;
+
+// Define the buyPlane function which increases the number
+// of planes by one and logs it to the console
+lufthansa.buyPlane = function () {
+    console.log(this);
+
+    this.planes++;
+    console.log(this.planes);
+};
+
+// Add event listener to the HTML element with the 'buy' class
+// so each time it's clicked, the buyPlane function is invoked
+document
+    .querySelector(".buy")
+    .addEventListener("click", lufthansa.buyPlane.bind(lufthansa));
+
+// Partial application
+
+/*
+La focus appliquée partielle vous permet de créer une nouvelle fonction en 
+préfournissant certaines des arguments à une fonction donnée. Ceci est fait 
+en utilisant la méthode bind(), où le premier argument passé à bind() devient 
+le premier argument pour la nouvelle fonction.
+
+Les applications partielles peuvent également être créées manuellement plutôt 
+qu'en utilisant bind(). Les lignes suivantes montrent comment faire cela en créant addVAT2
+
+*/
+
+// Define the addTax function which takes a rate and value and returns value + value * rate
+const addTax = (rate, value) => value + value * rate;
+console.log(addTax(0.1, 200));
+
+//Define the addVAT function which uses partial application to always have rate 0.23
+const addVAT = addTax.bind(null, 0.23);
+//Is The Same like
+//addVAT = value => value + value * 0.23;
+
+console.log(addVAT(100));
+console.log(addVAT(23));
+
+//Define the addTaxRate function which takes in a rate and sets it in the closure scope
+//The returned inner function utilizes the rate from the scope and
+//calculates and returns value + value * rate
+const addTaxRate = function (rate) {
+    return function (value) {
+        return value + value * rate;
+    };
+};
+
+//Create addVAT2 by applying the addTaxRate function and passing 0.23 as the rate
+const addVAT2 = addTaxRate(0.23);
+console.log(addVAT2(100));
+console.log(addVAT2(23));
