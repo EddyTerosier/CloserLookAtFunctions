@@ -181,3 +181,57 @@ document.body.addEventListener("click", high5);
 
 // Applique la fonction high5 à chaque élément du tableau ['Jonas', 'Martha', 'Adam'], de sorte que chaque élément affiche l'emoji "rock on" dans la console
 ["Jonas", "Martha", "Adam"].forEach(high5);
+
+// -------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------
+
+// Functions returning functions
+
+/* Cet exemple de code montre différentes façons de définir des fonctions 
+qui retournent d'autres fonctions en JavaScript.
+
+La première exemple, greet, est une déclaration de fonction normale où la 
+fonction interne prend un argument appelé name. Il affiche ensuite une phrase 
+à l'aide d'une interpolation de chaîne (${greeting} ${name}) où greeting est 
+l'argument passé à la fonction externe et name est l'argument passé à la fonction interne. 
+La fonction peut être appelée avec deux arguments de cette façon : greet("Hello")("John"). 
+Cela entraîne Hello John étant affiché dans la console.
+
+Le second exemple, greet2, fait la même chose que le précédent, mais utilise 
+des flèches à la place. Les fonctions flèches sont plus simples à lire, mais 
+produisent le même résultat.
+
+Le troisième exemple, greetArr, simplifie encore les choses. Il nécessite seulement 
+un argument, qui est passé à la fonction externe, et profite du retour implicite que 
+les fonctions à flèche ont. Il peut être invoqué de cette façon : greetArr("Yow")("la cité"), 
+entraînant « Yow la cité » étant affiché dans la console.
+
+Enfin, les quelques lignes finales démontrent comment créer une variable (greeterHey) 
+qui stocke le résultat de l’appel à greet("Hey"), ce qui rend possible d'appeler directement 
+la variable avec un seul argument, greeterHey("John"). */
+
+
+// créer une fonction qui prend un paramètre greeting et
+// retourne une fonction qui prendra un paramètre name
+const greet = function (greeting) {
+    return function (name) {
+      console.log(`${greeting} ${name}`);
+    };
+  };
+  
+  // Utiliser la fonction greeter avec le paramètre 'Hey'
+  const greeterHey = greet('Hey');
+  
+  // Appeler greeterHey avec les noms suivants en tant que paramètres
+  greeterHey('Jonas');
+  greeterHey('Steven');
+  
+  // Appeler directement greet avec le paramètre 'Hello' et le nom Jonas
+  greet('Hello')('Jonas');
+  
+  // La même chose en utilisant des fonctions fléchées
+  const greet2 = greeting => name => console.log(`${greeting} ${name}`);
+  
+  // Appeler greet2  avec le paramètre 'Hello' et le nom Eddy
+  greet2('Hello')('Eddy');
+  
