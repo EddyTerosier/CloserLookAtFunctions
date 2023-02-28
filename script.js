@@ -210,28 +210,114 @@ Enfin, les quelques lignes finales démontrent comment créer une variable (gree
 qui stocke le résultat de l’appel à greet("Hey"), ce qui rend possible d'appeler directement 
 la variable avec un seul argument, greeterHey("John"). */
 
-
 // créer une fonction qui prend un paramètre greeting et
 // retourne une fonction qui prendra un paramètre name
 const greet = function (greeting) {
     return function (name) {
-      console.log(`${greeting} ${name}`);
+        console.log(`${greeting} ${name}`);
     };
-  };
-  
-  // Utiliser la fonction greeter avec le paramètre 'Hey'
-  const greeterHey = greet('Hey');
-  
-  // Appeler greeterHey avec les noms suivants en tant que paramètres
-  greeterHey('Jonas');
-  greeterHey('Steven');
-  
-  // Appeler directement greet avec le paramètre 'Hello' et le nom Jonas
-  greet('Hello')('Jonas');
-  
-  // La même chose en utilisant des fonctions fléchées
-  const greet2 = greeting => name => console.log(`${greeting} ${name}`);
-  
-  // Appeler greet2  avec le paramètre 'Hello' et le nom Eddy
-  greet2('Hello')('Eddy');
-  
+};
+
+// Utiliser la fonction greeter avec le paramètre 'Hey'
+const greeterHey = greet("Hey");
+
+// Appeler greeterHey avec les noms suivants en tant que paramètres
+greeterHey("Jonas");
+greeterHey("Steven");
+
+// Appeler directement greet avec le paramètre 'Hello' et le nom Jonas
+greet("Hello")("Jonas");
+
+// La même chose en utilisant des fonctions fléchées
+const greet2 = (greeting) => (name) => console.log(`${greeting} ${name}`);
+
+// Appeler greet2  avec le paramètre 'Hello' et le nom Eddy
+greet2("Hello")("Eddy");
+
+// -------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------
+
+// The call and apply Methods
+
+/* Utilisation des méthodes call() et apply() en JavaScript
+Le code fourni montre comment utiliser les méthodes call() et apply() en JavaScript. 
+call() et apply() sont parmi les trois méthodes d'invocation disponibles lors de 
+l'appel d'une fonction.
+
+La méthode call() prend deux arguments : le argument this (la valeur de this à l'intérieur 
+de la fonction appelée) et une liste optionnelle des paramètres pour que la fonction les utilise. 
+Dans l'exemple ci-dessus, lufthansa.book est appelé avec call avec la valeur this définie 
+comme eurowings, ce qui permet d'accéder aux mêmes données que lufthansa.
+
+La méthode apply() prend également deux arguments - le this et un tableau des valeurs des 
+paramètres - mais diffère du call() dans le sens où les paramètres doivent être mis dans 
+un tableau avant de pouvoir être passés.
+
+Dans l'exemple fourni, book est appelé avec apply sur l'objet swiss, en utilisant un tableau 
+contenant le numéro de vol et le nom de la réservation. Il est ensuite appelé une fois de plus 
+en utilisant l'opérateur spread (...) qui est essentiellement raccourci pour la méthode apply(). */
+
+const lufthansa = {
+    airline: "Lufthansa",
+    iataCode: "LH",
+    bookings: [],
+    // book: function() {}
+    book(flightNum, name) {
+        console.log(
+            `${name} booked a seat on ${this.airline} flight ${this.iataCode}${flightNum}`
+        );
+        this.bookings.push({ flight: `${this.iataCode}${flightNum}`, name });
+    },
+};
+
+lufthansa.book(239, "Jonas Schmedtmann");
+lufthansa.book(635, "John Smith");
+
+const eurowings = {
+    airline: "Eurowings",
+    iataCode: "EW",
+    bookings: [],
+};
+
+const book = lufthansa.book;
+
+// Does NOT work
+// book(23, 'Sarah Williams');
+
+// Call method
+book.call(eurowings, 23, "Sarah Williams");
+console.log(eurowings);
+
+book.call(lufthansa, 239, "Mary Cooper");
+console.log(lufthansa);
+
+const swiss = {
+    airline: "Swiss Air Lines",
+    iataCode: "LX",
+    bookings: [],
+};
+
+book.call(swiss, 583, "Mary Cooper");
+
+// Apply method
+const flightData = [583, "George Cooper"];
+book.apply(swiss, flightData);
+console.log(swiss);
+
+book.call(swiss, ...flightData);
+
+// -------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------
+
+// The bind Method
+// book.call(eurowings, 23, 'Sarah Williams');
+
+const bookEW = book.bind(eurowings);
+const bookLH = book.bind(lufthansa);
+const bookLX = book.bind(swiss);
+
+bookEW(23, "Steven Williams");
+
+const bookEW23 = book.bind(eurowings, 23);
+bookEW23("Jonas Schmedtmann");
+bookEW23("Martha Cooper");
